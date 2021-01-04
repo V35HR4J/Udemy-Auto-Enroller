@@ -23,3 +23,5 @@ Input list of udemy free courses and let python enroll it for you.
 2. Enter courses links with coupans which you want to enroll in courses.txt.
 3. Run the script, it asks for your email and password, which you should enter.
 4. It automatically enrolls all the courses on courses.txt for you. 
+
+This is just basic version more yet to come,contributors are mostly welcome. If u want to work on something realted to this project pls inform us about it and we may too help further.
