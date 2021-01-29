@@ -1,9 +1,9 @@
 from selenium import webdriver
-from getpass import getpass
 from selenium.webdriver.common import keys
 import time
 import sys
 import re
+import json
 from colorama import Fore
 print(Fore.YELLOW + '''  
  _   _     _                           _         _        
@@ -20,55 +20,49 @@ print(Fore.YELLOW + '''
                                      
                                       
      ''')
-
-emailid=input(Fore.RED+ 'Enter Email Address: ')
-passwordd=getpass()
+with open('acc.json') as f:
+    data = json.loads(f.read())
+    emailid=data['email']
+    passwordd=data['password']
 browser = webdriver.Chrome()
 
 
 def login():
     browser.get('https://www.udemy.com/join/login-popup/')
     time.sleep(5)
-    mail=browser.find_elements_by_xpath('//*[@id="email--1"]')
+    mail=browser.find_elements_by_css_selector('#email--1')
     mail[0].send_keys(emailid)
     passs=browser.find_elements_by_css_selector('#id_password')
     passs[0].send_keys(passwordd)
-    browser.find_element_by_xpath('//*[@id="submit-id-submit"]').click()
+    klik=browser.find_elements_by_css_selector('#submit-id-submit')
+    klik[0].click()
+    print(Fore.GREEN + 'Login Sucess, Enrolling Now\n')  
 
-def auth():
-    browser.get('https://www.udemy.com/')
-    time.sleep(10)
-    try:
-        browser.find_element_by_xpath('/html/body/div[2]/div[3]/div[1]/nav/ul/li[2]/div/a')
-
-    except:
-        print(Fore.RED + 'Invalid Email/Password Recheck and Rerun Once. ')
-        browser.quit()
-        sys. exit()   
-        
-    else:
-       print(Fore.GREEN + 'Login Sucess, Enrolling Now')       
-        
-
-
-def Enrolled():    
+def Enroll():    
     with open('courses.txt','r')as courses:
         for line in courses:
             if re.search("https://www.udemy.com/", line):
                 browser.get(line)
-                time.sleep(15)
+                time.sleep(5)
                 try:
-                    enroll=browser.find_element_by_xpath('/html/body/div[2]/div[3]/div[1]/div[3]/div/div/div/div[1]/div/div[1]/div[2]/div/div[1]/div/div[5]/div/button')
-                    browser.execute_script("arguments[0].click();", enroll)
-                    time.sleep(15)
-                    enrollnow=browser.find_element_by_xpath('/html/body/div[1]/div[2]/div/div/div/div[2]/form/div[2]/div/div[4]/button')
-                    browser.execute_script("arguments[0].click();", enrollnow)
-                    print('Sucesfully Enrolled '+line)
+                    firsEnrol=browser.find_element_by_css_selector('.generic-purchase-section--free-course--JmRjJ > div:nth-child(1) > div:nth-child(1) > div:nth-child(5) > div:nth-child(1) > button:nth-child(1)')
+                    text=firsEnrol.text
+                    print(text)
+                    if text!='Enroll now':
+                        print(Fore.RED +'The Course is not free or coupan is expired!\n')
+                    else:
+                        firsEnrol=browser.find_element_by_css_selector('.generic-purchase-section--free-course--JmRjJ > div:nth-child(1) > div:nth-child(1) > div:nth-child(5) > div:nth-child(1) > button:nth-child(1)')
+                        firsEnrol.click()
+                        time.sleep(2)
+                        secondEnrol=browser.find_element_by_css_selector('.styles--checkout-pane-outer--1syWc > div:nth-child(1) > div:nth-child(4) > button:nth-child(2)')
+                        secondEnrol.click()
+                        print(Fore.GREEN+f'Sucessfully Enrolled: {line}\n')
+                        time.sleep(2)
                 except:
-                    print(Fore.RED + "Course Not Free or Coupan expired. So Trying to enroll Next one from the list ")
-            else:
-                print(Fore.RED + "PLease Enter a valid URL. Trying to enroll Next one from the list.") 
+                    print('Looks like it is already enrolled, Check Link once again and try again\n')        
 
+            else:
+                print(Fore.RED+'Invalid Course Link\n')        
 login()
-auth()
-Enrolled()
+Enroll()
+browser.quit()
