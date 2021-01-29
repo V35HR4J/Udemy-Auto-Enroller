@@ -20,7 +20,7 @@ print(Fore.YELLOW + '''
                                      
                                       
      ''')
-with open('GuessGame/pys/acc.json') as f:
+with open('acc.json') as f:
     data = json.loads(f.read())
     emailid=data['email']
     passwordd=data['password']
@@ -39,7 +39,7 @@ def login():
     print(Fore.GREEN + 'Login Sucess, Enrolling Now\n')  
 
 def Enroll():    
-    with open('/home/veshraj/Desktop/Github/Learnings/GuessGame/pys/courses.txt','r')as courses:
+    with open('courses.txt','r')as courses:
         for line in courses:
             if re.search("https://www.udemy.com/", line):
                 browser.get(line)
