@@ -1,4 +1,2 @@
 selenium
-getpass
-sys
 colorama
